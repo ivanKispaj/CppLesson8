@@ -13,6 +13,7 @@ class BadAnswer
 
 public:
     BadAnswer() = default;
-    BadAnswer(ArrayError errorCode);
+   explicit BadAnswer(ArrayError errorCode);
+    ~BadAnswer() = default;
     const char *showError() const;
 };

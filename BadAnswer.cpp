@@ -23,5 +23,7 @@ const char *BadAnswer::showError() const
     return "Bad array leinght!\n";
   case 4:
     return "Incorrect array leinght, create empty array!\n";
+  default:
+  return "Unknown Error";
   }
 }

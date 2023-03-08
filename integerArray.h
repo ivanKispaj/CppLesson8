@@ -29,6 +29,7 @@ class Array
         delete[] _array;
         _array = nullptr;
         _isEmpty = true;
+        _returnValue = T();
     }
 
     // private method sort
@@ -47,13 +48,8 @@ class Array
 
 public:
     // Init default
-    Array()
-    {
-        _array = nullptr;
-        _size = 0;
-        _isEmpty = true;
-        // _returnValue = ;
-    }
+    Array<T>() : _array(nullptr), _size(0), _isEmpty(true), _returnValue(T()) {};
+
 
     // Init with size
     /*
@@ -63,7 +59,7 @@ public:
         integerArray array(0) / integerArray array(-1) - this create epmty array! and will throw an exception message!
         integerArray array(5) - create array leinght 5 and default value - 0
     */
-    Array(int size)
+   explicit Array<T>(int size)
     {
         try
         {
@@ -73,8 +69,10 @@ public:
             }
             else
             {
-                _array = new T[_size];
+                _array = new T[size];
+                _size = size;
                 _isEmpty = false;
+                _returnValue = T();
             }
         }
         catch (const BadAnswer &error)
@@ -82,13 +80,13 @@ public:
             _array = nullptr;
             _size = 0;
             _isEmpty = true;
-            _returnValue = 0;
+            _returnValue = T();
             std::cerr << error.showError();
         }
     }
 
     //  Copy construction
-    Array(const Array &array)
+    Array<T>(const Array &array)
     {
         erase();
         _isEmpty = array._isEmpty;
@@ -101,7 +99,7 @@ public:
     }
 
     // Deinit
-    ~Array()
+    ~Array<T>()
     {
         delete[] _array;
     }
@@ -125,7 +123,7 @@ public:
         This method adds a value to the end of the array,
          and increases the size of the array
     */
-    void append(T value) // append an element to end of the array
+    void append(const T& value) // append an element to end of the array
     {
         _size++;
         T *newArray = new T[_size];
@@ -157,7 +155,7 @@ public:
         - Error message: "Array is empty!" if array is empty.
         - Error message: "Index out of range!" if array dont contain an index
     */
-    void insertAt(int index, T value) // Inserts an element into an array by index
+    void insertAt(int index, const T& value) // Inserts an element into an array by index
     {
         try
         {
@@ -374,7 +372,7 @@ public:
         - Returns a pointer to the first index of the value or nullptr if the value is not found.
         - throw Error if array is empty and return nullptr
     */
-    std::optional<int> getFirstIndexWhere(T value) // Array search by value
+    std::optional<int> getFirstIndexWhere(const T& value) // Array search by value
     {
         try
         {
@@ -402,7 +400,7 @@ public:
     /*
         this method isert value to the beginning of the array
     */
-    void inserFirst(T value) // Adding an element to the beginning of the array
+    void inserFirst(const T& value) // Adding an element to the beginning of the array
     {
         insertAt(0, value);
     }
@@ -456,7 +454,7 @@ public:
         - '=' Returns a container with elements equal to the value
 
     */
-    Array<T> filter(char operation, T value) const // Method for filtering an array
+    Array<T> filter(char operation, const T& value) const // Method for filtering an array
     {
         Array<T> retArr;
         switch (operation)
@@ -529,7 +527,7 @@ public:
 
 
     // array concatenation
-    Array<T> operator+(Array<T> &array)
+    Array<T> operator+(const Array<T> &array)
     {
         if (_isEmpty && array._isEmpty)
         {
