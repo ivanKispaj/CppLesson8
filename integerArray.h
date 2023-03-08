@@ -15,7 +15,7 @@ class Array
 {
     // private property
     int _size{0};
-    T *_array = nullptr;
+    std::unique_ptr<T[]> _array = nullptr;
     bool _isEmpty{true};
     T _returnValue;
 
@@ -26,7 +26,6 @@ class Array
     */
     void erase()
     {
-        delete[] _array;
         _array = nullptr;
         _isEmpty = true;
         _returnValue = T();
@@ -91,7 +90,7 @@ public:
         erase();
         _isEmpty = array._isEmpty;
         _size = array._size;
-        _array = new T[array._size];
+        _array = std::make_unique<T[]>(array._size);
         for (int i = 0; i < _size; i++)
         {
             _array[i] = array._array[i];
@@ -99,10 +98,7 @@ public:
     }
 
     // Deinit
-    ~Array<T>()
-    {
-        delete[] _array;
-    }
+    ~Array<T>() = default;
 
     // return array leinght
     int count() const
@@ -126,7 +122,7 @@ public:
     void append(const T& value) // append an element to end of the array
     {
         _size++;
-        T *newArray = new T[_size];
+        std::unique_ptr<T[]>  newArray = std::make_unique<T[]>(_size);
 
         if (_size <= 1)
         {
@@ -144,7 +140,7 @@ public:
         erase();
 
         _isEmpty = false;
-        _array = newArray;
+        _array = std::move(newArray);
     }
 
     // Inserts an element into an array by index
@@ -169,7 +165,7 @@ public:
             }
 
             _size++;
-            int *newArray = new int[_size];
+            std::unique_ptr<T[]> newArray = std::make_unique<T[]>(_size);
 
             for (int i = 0; i < index; i++)
             {
@@ -188,7 +184,7 @@ public:
 
             erase();
             _isEmpty = false;
-            _array = newArray;
+            _array = std::move(newArray);
         }
         catch (const BadAnswer &error)
         {
@@ -265,14 +261,14 @@ public:
             }
             else
             {
-                T *newArray = new T[_size];
+                std::unique_ptr<T[]> newArray = std::make_unique<T[]>(_size);
                 for (int i = 0; i < _size; i++)
                 {
                     newArray[i] = _array[i + 1];
                 }
                 erase();
                 _isEmpty = false;
-                _array = newArray;
+                _array = std::move(newArray);
             }
 
             return _returnValue;
@@ -340,7 +336,6 @@ public:
             }
 
             _returnValue = _array[index];
-            // int* result = new int(_array[index]);
             int *newArray = new int[_size - 1];
             for (int i = 0; i < index; i++)
             {
@@ -423,7 +418,7 @@ public:
     void sort(char operation = '>') // sort method
     {
         Array<T> res = sortThis(*this);
-        T *newArray = new T[res.count()];
+        std::unique_ptr<T[]> newArray = std::make_unique<T[]>(res.count());
         switch (operation)
         {
         case '>':
@@ -440,8 +435,7 @@ public:
             }
             break;
         }
-        delete[] _array;
-        _array = newArray;
+        _array = std::move(newArray);
     }
 
     // Method for filtering an array
@@ -535,7 +529,7 @@ public:
         }
 
         _isEmpty = false;
-        T *newArray = new T[_size + array._size];
+        std::unique_ptr<T[]> newArray = std::make_unique<T[]>(_size + array._size);
 
         for (int i = 0; i < _size; i++)
         {
@@ -550,7 +544,7 @@ public:
         erase();
         _isEmpty = false;
         _size += array._size;
-        _array = newArray;
+        _array = std::move(newArray);
         return *this;
     }
 
@@ -563,7 +557,7 @@ public:
         }
 
         _isEmpty = false;
-        T *newArray = new T[_size + array._size];
+        std::unique_ptr<T[]> newArray = std::make_unique<T[]>(_size + array._size);
 
         for (int i = 0; i < _size; i++)
         {
@@ -578,7 +572,7 @@ public:
         erase();
         _isEmpty = false;
         _size += array._size;
-        _array = newArray;
+        _array = std::move(newArray);
         return *this;
     }
 
